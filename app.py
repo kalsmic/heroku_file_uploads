@@ -49,23 +49,27 @@ def upload():
     # Check if the file is one of the allowed types/extensions
     if not allowed_file(file.filename):
         message = "Sorry. Only files that end with one of these "
-        message += "extensions is permitted: " 
+        message += "extensions is permitted: "
         message += str(app.config['ALLOWED_EXTENSIONS'])
         message += "<a href='" + url_for("index") + "'>Try again</a>"
         return message
     elif not file:
         message = "Sorry. There was an error with that file.<br>"
         message += "<a href='" + url_for("index") + "'>Try again</a>"
-        return message        
+        return message
     else:
         # Make the filename safe, remove unsupported chars
         filename = secure_filename(file.filename)
         # Move the file form the temporal folder to
         # the upload folder we setup
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        extension = filename.rsplit(".", 1)[1].lower()
+
+        imageName = str(uuid4()) + "." + str(extension)
+        imageName = str(imageName).replace("-","_")
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], imageName))
         # Redirect the user to the uploaded_file route, which
         # will basicaly show on the browser the uploaded file
-        return redirect(url_for('uploaded_file',filename=filename))
+        return redirect(url_for('uploaded_file',filename=imageName))
 
 
 # This route is expecting a parameter containing the name
@@ -75,7 +79,9 @@ def upload():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
+    # return send_from_directory(app.config['UPLOAD_FOLDER'], 'uploads/'
+
+    return send_from_directory('uploads/'
                                filename)
 
 if __name__ == '__main__':
