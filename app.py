@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from uuid import uuid4
 # We'll render HTML templates and access data sent by POST
 # using the request object from flask. Redirect and url_for
 # will be used to redirect the user once the upload is done
